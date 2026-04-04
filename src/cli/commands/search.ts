@@ -2,6 +2,7 @@ import { defineCommand } from "citty";
 import { fetchStores } from "../../api/graphql";
 import { buildFilter, searchProducts } from "../../api/meilisearch";
 import { findStoreByName, firstRunPicker, readConfig } from "../../config";
+import { extractRegion } from "../../lib/region";
 import type { BhsConfig, Product, SearchFilterFlags } from "../../types";
 import { withErrorBoundary } from "../error-boundary";
 import {
@@ -135,7 +136,7 @@ export const searchCommand = defineCommand({
             displayPrice: `$${variant.price}`,
             displayPackage: variant.packageName,
             stock: warehouse?.availableQty ?? 0,
-            displayRegion: hit.region_lvl0 ?? "-",
+            displayRegion: extractRegion(hit.productAttributes),
           };
         })
         .filter((r) => r != null);
@@ -155,7 +156,7 @@ export const searchCommand = defineCommand({
           displayPrice: `$${hit.price}`,
           displayPackage: hit.variants[0]?.packageName ?? "-",
           stock: warehouse?.availableQty ?? 0,
-          displayRegion: hit.region_lvl0 ?? "-",
+          displayRegion: extractRegion(hit.productAttributes),
         };
       });
     }

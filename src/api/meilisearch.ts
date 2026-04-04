@@ -47,16 +47,16 @@ export function buildFilter(flags: SearchFilterFlags, warehouseCode: string): st
     parts.push(`price <= ${flags["price-max"]}`);
   }
   if (flags.drinkability) {
-    parts.push(`drinkability.name = "${flags.drinkability}"`);
+    parts.push(`productAttributes.name = "${flags.drinkability}"`);
   }
   if (flags.body) {
-    parts.push(`body = "${flags.body}"`);
+    parts.push(`productAttributes.name = "${flags.body}"`);
   }
   if (flags.farming) {
-    parts.push(`farming = "${flags.farming}"`);
+    parts.push(`productAttributes.name = "${flags.farming}"`);
   }
   if (flags.dietary) {
-    parts.push(`dietaryTags = "${flags.dietary}"`);
+    parts.push(`productAttributes.name = "${flags.dietary}"`);
   }
   if (flags.collection) {
     parts.push(`customCollections = "${flags.collection}"`);

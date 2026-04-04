@@ -2,6 +2,14 @@ import { defineCommand } from "citty";
 import { fetchStores } from "../../api/graphql";
 import { getProductBySku } from "../../api/meilisearch";
 import { findStoreByName, firstRunPicker, readConfig } from "../../config";
+import {
+  extractBody,
+  extractDietary,
+  extractDrinkability,
+  extractFarming,
+  extractVarietal,
+} from "../../lib/attributes";
+import { extractRegion } from "../../lib/region";
 import type { BhsConfig } from "../../types";
 import { withErrorBoundary } from "../error-boundary";
 import { OUTPUT_FLAGS, STORE_FLAG } from "../flags";
@@ -65,8 +73,8 @@ export const productCommand = defineCommand({
       ? `${warehouse.availableQty} @ ${config.store.name}`
       : `0 @ ${config.store.name}`;
 
-    const attributes = product.productAttributes.map((a) => a.name).join(", ");
     const collections = product.customCollections?.join(", ") ?? "-";
+    const attrs = product.productAttributes;
 
     showSummary(`Product ${product.masterSku}`);
 
@@ -83,15 +91,16 @@ export const productCommand = defineCommand({
       ["Price", `$${product.price}`],
       ["Variants", variantLines],
       ["Type", product.productType],
-      ["Region", product.region_lvl0 ?? "-"],
+      ["Varietal", extractVarietal(attrs) ?? "-"],
+      ["Region", extractRegion(attrs)],
+      ["Body", extractBody(attrs) ?? "-"],
+      ["Drinkability", extractDrinkability(attrs) ?? "-"],
       ["Stock", stockDisplay],
       ["Status", product.stockStatus],
       ["Description", product.description || "-"],
-      ["Attributes", attributes || "-"],
       ["Collection", collections],
-      ["Drinkability", product.drinkability.name ?? "-"],
-      ["Farming", product.farming ?? "-"],
-      ["Dietary", product.dietaryTags ?? "-"],
+      ["Dietary", extractDietary(attrs).join(", ") || "-"],
+      ["Farming", extractFarming(attrs).join(", ") || "-"],
     ];
 
     console.log(formatDetail(entries));
