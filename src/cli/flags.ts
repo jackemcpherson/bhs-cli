@@ -41,9 +41,14 @@ export const SEARCH_FILTER_FLAGS = {
     type: "string" as const,
     description: "Product type (Wine, Spirits, Beer, AlcoholFree, Food, Homewares, etc.)",
   },
+  country: {
+    type: "string" as const,
+    description: "Country (Australia, France, Italy, Spain, Germany, etc.)",
+    alias: "c",
+  },
   region: {
     type: "string" as const,
-    description: "Region (country/state/subregion)",
+    description: "Region or subregion (Victoria, Yarra Valley, Burgundy, etc.)",
   },
   varietal: {
     type: "string" as const,

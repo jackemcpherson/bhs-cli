@@ -14,6 +14,7 @@ describe("buildDefaultFilter", () => {
 describe("buildFilter", () => {
   const emptyFlags: SearchFilterFlags = {
     type: undefined,
+    country: undefined,
     region: undefined,
     varietal: undefined,
     "price-min": undefined,
@@ -37,11 +38,39 @@ describe("buildFilter", () => {
     expect(result).toContain('AND productType = "Wine"');
   });
 
-  it("appends region filter across all levels", () => {
+  it("appends country filter using region_lvl0", () => {
+    const result = buildFilter({ ...emptyFlags, country: "France" }, "311");
+    expect(result).toContain('AND region_lvl0 = "France"');
+  });
+
+  it("appends region filter using productAttributes.name", () => {
     const result = buildFilter({ ...emptyFlags, region: "Yarra Valley" }, "311");
-    expect(result).toContain('region_lvl0 = "Yarra Valley"');
-    expect(result).toContain('region_lvl1 = "Yarra Valley"');
-    expect(result).toContain('region_lvl2 = "Yarra Valley"');
+    expect(result).toContain('AND productAttributes.name = "Yarra Valley"');
+  });
+
+  it("appends varietal filter using productAttributes.name", () => {
+    const result = buildFilter({ ...emptyFlags, varietal: "Pinot Noir" }, "311");
+    expect(result).toContain('AND productAttributes.name = "Pinot Noir"');
+  });
+
+  it("appends body filter using body.name", () => {
+    const result = buildFilter({ ...emptyFlags, body: "Medium" }, "311");
+    expect(result).toContain('AND body.name = "Medium"');
+  });
+
+  it("appends drinkability filter using drinkability.name", () => {
+    const result = buildFilter({ ...emptyFlags, drinkability: "Guzzle" }, "311");
+    expect(result).toContain('AND drinkability.name = "Guzzle"');
+  });
+
+  it("appends dietary filter using dietary.name", () => {
+    const result = buildFilter({ ...emptyFlags, dietary: "Vegan" }, "311");
+    expect(result).toContain('AND dietary.name = "Vegan"');
+  });
+
+  it("appends farming filter using top-level farming field", () => {
+    const result = buildFilter({ ...emptyFlags, farming: "Organic" }, "311");
+    expect(result).toContain('AND farming = "Organic"');
   });
 
   it("appends price range filters", () => {
@@ -62,12 +91,13 @@ describe("buildFilter", () => {
 
   it("combines multiple filters", () => {
     const result = buildFilter(
-      { ...emptyFlags, type: "Wine", region: "France", "price-max": "30" },
+      { ...emptyFlags, type: "Wine", country: "France", region: "Burgundy", "price-max": "30" },
       "280",
     );
     expect(result).toContain('availableWarehouseCodes = "280"');
     expect(result).toContain('productType = "Wine"');
     expect(result).toContain('region_lvl0 = "France"');
+    expect(result).toContain('productAttributes.name = "Burgundy"');
     expect(result).toContain("price <= 30");
   });
 });

@@ -1,6 +1,10 @@
 node_modules/
 dist/
 *.tgz
+*.png
 
 # project uses bun
 package-lock.json
+
+# browser testing artifacts
+.playwright-mcp/

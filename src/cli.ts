@@ -19,6 +19,7 @@ const main = defineCommand({
     stores: () => import("./cli/commands/stores").then((m) => m.storesCommand),
     facets: () => import("./cli/commands/facets").then((m) => m.facetsCommand),
     config: () => import("./cli/commands/config").then((m) => m.configCommand),
+    cart: () => import("./cli/commands/cart").then((m) => m.cartCommand),
   },
 });
 

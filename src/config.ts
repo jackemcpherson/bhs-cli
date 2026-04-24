@@ -1,4 +1,4 @@
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { homedir } from "node:os";
 import { dirname, join } from "node:path";
 import { isCancel, select } from "@clack/prompts";
@@ -8,6 +8,7 @@ import type { BhsConfig, Store } from "./types";
 
 const CONFIG_DIR = join(homedir(), ".config", "bhs");
 const CONFIG_PATH = join(CONFIG_DIR, "config.json");
+const CHECKOUT_PATH = join(CONFIG_DIR, "checkout.json");
 
 const BhsConfigSchema = z.object({
   store: z.object({
@@ -17,14 +18,14 @@ const BhsConfigSchema = z.object({
 });
 
 export function readConfig(): BhsConfig | undefined {
-  if (!existsSync(CONFIG_PATH)) {
-    return undefined;
-  }
   try {
     const raw = readFileSync(CONFIG_PATH, "utf-8");
     const parsed: unknown = JSON.parse(raw);
     return BhsConfigSchema.parse(parsed);
   } catch (error) {
+    if (error instanceof Error && "code" in error && error.code === "ENOENT") {
+      return undefined;
+    }
     throw new ConfigError(
       `Invalid config at ${CONFIG_PATH}: ${error instanceof Error ? error.message : String(error)}`,
     );
@@ -34,6 +35,25 @@ export function readConfig(): BhsConfig | undefined {
 export function writeConfig(config: BhsConfig): void {
   mkdirSync(dirname(CONFIG_PATH), { recursive: true });
   writeFileSync(CONFIG_PATH, `${JSON.stringify(config, null, 2)}\n`, "utf-8");
+}
+
+export function readCheckoutUid(): string | undefined {
+  try {
+    const raw = readFileSync(CHECKOUT_PATH, "utf-8");
+    const parsed = JSON.parse(raw) as { uid?: string };
+    return parsed.uid;
+  } catch {
+    return undefined;
+  }
+}
+
+export function writeCheckoutUid(uid: string): void {
+  mkdirSync(dirname(CHECKOUT_PATH), { recursive: true });
+  writeFileSync(CHECKOUT_PATH, `${JSON.stringify({ uid }, null, 2)}\n`, "utf-8");
+}
+
+export function clearCheckoutUid(): void {
+  rmSync(CHECKOUT_PATH, { force: true });
 }
 
 export function findStoreByName(query: string, stores: readonly Store[]): Store | undefined {

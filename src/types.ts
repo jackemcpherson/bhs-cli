@@ -116,6 +116,41 @@ export interface FacetResult {
   readonly facetStats: Record<string, { min: number; max: number }> | undefined;
 }
 
+export interface LineItemDiscount {
+  readonly discountName: string;
+  readonly discountAmount: number;
+  readonly discountedItemPrice: number;
+}
+
+export interface LineItem {
+  readonly id: string;
+  readonly masterSku: string;
+  readonly sku: string;
+  readonly quantity: number;
+  readonly title: string;
+  readonly packageName: string;
+  readonly productType: string;
+  readonly singlePrice: number;
+  readonly discountedPrice: number;
+  readonly discounts: readonly LineItemDiscount[];
+}
+
+export interface Checkout {
+  readonly uid: string;
+  readonly status: string;
+  readonly subtotal: number;
+  readonly discountedSubtotal: number;
+  readonly gst: number;
+  readonly total: number;
+  readonly lineItems: readonly LineItem[];
+}
+
+export interface LineItemInput {
+  readonly sku: string;
+  readonly masterSku: string;
+  readonly quantity: number;
+}
+
 export type SortOption = "price:asc" | "price:desc";
 
 export type OutputFormat = "table" | "json";
@@ -139,6 +174,7 @@ export type FacetName = (typeof FACET_NAMES)[number];
 
 export interface SearchFilterFlags {
   readonly type: string | undefined;
+  readonly country: string | undefined;
   readonly region: string | undefined;
   readonly varietal: string | undefined;
   readonly "price-min": string | undefined;

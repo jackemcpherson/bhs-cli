@@ -19,6 +19,7 @@ import { showSummary, withSpinner } from "../ui";
 import { validateLimit, validatePage, validateSort } from "../validation";
 
 const SEARCH_COLUMNS = [
+  { key: "masterSku", label: "SKU", maxWidth: 8 },
   { key: "name", label: "Name", maxWidth: 40 },
   { key: "displayPrice", label: "Price", maxWidth: 10 },
   { key: "displayPackage", label: "Package", maxWidth: 14 },
@@ -28,6 +29,7 @@ const SEARCH_COLUMNS = [
 ];
 
 const SEARCH_COLUMNS_NO_PACKAGE = [
+  { key: "masterSku", label: "SKU", maxWidth: 8 },
   { key: "name", label: "Name", maxWidth: 40 },
   { key: "displayPrice", label: "Price", maxWidth: 8 },
   { key: "stock", label: "Stock", maxWidth: 6 },
@@ -92,6 +94,7 @@ export const searchCommand = defineCommand({
 
     const filterFlags: SearchFilterFlags = {
       type: args.type,
+      country: args.country,
       region: args.region,
       varietal: args.varietal,
       "price-min": args["price-min"],

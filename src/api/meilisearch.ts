@@ -28,17 +28,14 @@ export function buildFilter(flags: SearchFilterFlags, warehouseCode: string): st
   if (flags.type) {
     parts.push(`productType = "${flags.type}"`);
   }
+  if (flags.country) {
+    parts.push(`region_lvl0 = "${flags.country}"`);
+  }
   if (flags.region) {
-    const r = flags.region;
-    parts.push(
-      `(region_lvl0 = "${r}" OR region_lvl1 = "${r}" OR region_lvl1 = "${r} > ${r}" OR region_lvl2 = "${r}" OR productAttributes.name = "${r}")`,
-    );
+    parts.push(`productAttributes.name = "${flags.region}"`);
   }
   if (flags.varietal) {
-    const v = flags.varietal;
-    parts.push(
-      `(varietal_lvl0 = "${v}" OR varietal_lvl1 = "${v}" OR varietal_lvl1 = "${v} > ${v}" OR productAttributes.name = "${v}")`,
-    );
+    parts.push(`productAttributes.name = "${flags.varietal}"`);
   }
   if (flags["price-min"]) {
     parts.push(`price >= ${flags["price-min"]}`);
@@ -47,16 +44,16 @@ export function buildFilter(flags: SearchFilterFlags, warehouseCode: string): st
     parts.push(`price <= ${flags["price-max"]}`);
   }
   if (flags.drinkability) {
-    parts.push(`productAttributes.name = "${flags.drinkability}"`);
+    parts.push(`drinkability.name = "${flags.drinkability}"`);
   }
   if (flags.body) {
-    parts.push(`productAttributes.name = "${flags.body}"`);
+    parts.push(`body.name = "${flags.body}"`);
   }
   if (flags.farming) {
-    parts.push(`productAttributes.name = "${flags.farming}"`);
+    parts.push(`farming = "${flags.farming}"`);
   }
   if (flags.dietary) {
-    parts.push(`productAttributes.name = "${flags.dietary}"`);
+    parts.push(`dietary.name = "${flags.dietary}"`);
   }
   if (flags.collection) {
     parts.push(`customCollections = "${flags.collection}"`);

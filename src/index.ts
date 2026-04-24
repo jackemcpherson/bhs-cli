@@ -1,4 +1,11 @@
-export { fetchStores } from "./api/graphql";
+export {
+  addLineItems,
+  createCheckout,
+  deleteCheckout,
+  fetchStores,
+  getCheckout,
+  updateLineItemQuantity,
+} from "./api/graphql";
 export {
   buildDefaultFilter,
   buildFilter,
@@ -11,8 +18,12 @@ export type { Err, Ok, Result } from "./lib/result";
 export { err, ok } from "./lib/result";
 export type {
   BhsConfig,
+  Checkout,
   FacetName,
   FacetResult,
+  LineItem,
+  LineItemDiscount,
+  LineItemInput,
   OutputFormat,
   Product,
   ProductAttribute,
