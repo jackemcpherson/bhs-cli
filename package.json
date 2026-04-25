@@ -1,6 +1,6 @@
 {
   "name": "@jackemcpherson/bhs-cli",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "CLI for Blackhearts & Sparrows product search and stock checking",
   "type": "module",
   "main": "./dist/index.js",

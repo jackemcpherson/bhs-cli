@@ -163,7 +163,7 @@ export const FACET_NAMES = [
   "region_lvl1",
   "region_lvl2",
   "customCollections",
-  "body",
+  "body.name",
   "farming",
   "dietaryTags",
   "type.name",

@@ -6,7 +6,7 @@ describe("buildDefaultFilter", () => {
   it("builds the base filter with warehouse code", () => {
     const result = buildDefaultFilter("311");
     expect(result).toBe(
-      'isActive = true AND availableWarehouseCodes = "311" AND productType != "Packs"',
+      'isActive = true AND warehouses.code = "311" AND productType != "Packs"',
     );
   });
 });
@@ -94,7 +94,7 @@ describe("buildFilter", () => {
       { ...emptyFlags, type: "Wine", country: "France", region: "Burgundy", "price-max": "30" },
       "280",
     );
-    expect(result).toContain('availableWarehouseCodes = "280"');
+    expect(result).toContain('warehouses.code = "280"');
     expect(result).toContain('productType = "Wine"');
     expect(result).toContain('region_lvl0 = "France"');
     expect(result).toContain('productAttributes.name = "Burgundy"');

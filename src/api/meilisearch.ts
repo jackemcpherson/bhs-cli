@@ -19,7 +19,7 @@ async function postSearch(body: Record<string, unknown>): Promise<Response> {
 }
 
 export function buildDefaultFilter(warehouseCode: string): string {
-  return `isActive = true AND availableWarehouseCodes = "${warehouseCode}" AND productType != "Packs"`;
+  return `isActive = true AND warehouses.code = "${warehouseCode}" AND productType != "Packs"`;
 }
 
 export function buildFilter(flags: SearchFilterFlags, warehouseCode: string): string {
