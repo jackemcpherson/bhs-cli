@@ -60,8 +60,8 @@ export interface Product {
   readonly lastUpdated: string;
   readonly varietal_lvl0: string | null;
   readonly varietal_lvl1: string | null;
-  readonly region_lvl0: string | null;
-  readonly region_lvl1: string | null;
+  readonly region_lvl0?: string | null | undefined;
+  readonly region_lvl1?: string | null | undefined;
   readonly region_lvl2?: string | null | undefined;
   readonly warehouses: readonly ProductWarehouse[];
   readonly isSearchableProduct: boolean;
