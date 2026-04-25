@@ -14,7 +14,7 @@ export { getProductService } from "./core/services/get-product";
 export { listFacets } from "./core/services/list-facets";
 export { listStores } from "./core/services/list-stores";
 export { resolveStore } from "./core/services/resolve-store";
-export { searchProductsByPackagePage, searchProductsService } from "./core/services/search-products";
+export { searchWithPostFilter, searchWithPostFilter as searchProductsByPackagePage, searchProductsService } from "./core/services/search-products";
 export {
   BrowserOpenError,
   CheckoutError,

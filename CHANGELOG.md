@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.1.2 (2026-04-25)
+
+### Fixed
+
+- `--in-stock` filter now checks per-warehouse `availableQty > 0` instead of the unreliable global `isInStock` flag — eliminates false positives where products appeared in-stock at a store but actually had zero quantity
+
 ## 2.1.1 (2026-04-25)
 
 ### Fixed

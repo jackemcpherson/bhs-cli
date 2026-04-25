@@ -105,6 +105,7 @@ describe("searchProductsByPackagePage", () => {
       limit: 3,
       page: 6,
       packageName: "Can",
+      inStock: false,
       sort: undefined,
       warehouseCode: "311",
       search,

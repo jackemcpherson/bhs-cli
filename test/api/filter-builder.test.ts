@@ -77,9 +77,9 @@ describe("buildFilter", () => {
     expect(result).toContain("AND price <= 50");
   });
 
-  it("appends in-stock filter", () => {
+  it("does not append in-stock to Meilisearch filter (handled as post-filter)", () => {
     const result = buildFilter({ ...emptyFlags, "in-stock": true }, "311");
-    expect(result).toContain("AND isInStock = true");
+    expect(result).not.toContain("isInStock");
   });
 
   it("appends raw filter", () => {

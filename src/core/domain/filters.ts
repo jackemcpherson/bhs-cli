@@ -64,9 +64,10 @@ export function buildFilter(flags: SearchFilterFlags, warehouseCode: string): st
   if (flags.collection) {
     parts.push(`customCollections = ${quoteFilterValue(flags.collection)}`);
   }
-  if (flags["in-stock"]) {
-    parts.push("isInStock = true");
-  }
+  // Note: in-stock filtering is handled as a client-side post-filter in the
+  // search service, because Meilisearch cannot filter on nested array fields
+  // (warehouses[code=X AND availableQty > 0]). The global isInStock flag is
+  // unreliable — it disagrees with per-warehouse availableQty.
   if (flags.filter) {
     parts.push(validateRawFilter(flags.filter));
   }
