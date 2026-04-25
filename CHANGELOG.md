@@ -1,11 +1,12 @@
 # Changelog
 
-## 2.2.2 (2026-04-25)
+## 2.2.3 (2026-04-25)
 
 ### Fixed
 
-- `CheckoutDeleteResponseSchema` now accepts `null` for the `deleteCheckout` result — fixes Zod validation crash when the backend returns null (checkout already deleted or expired)
-- `CheckoutMutationResponseSchema` now accepts `null` mutation results (`.nullish()` instead of `.optional()`) — fixes Zod validation crash when adding out-of-stock SKUs to cart, allowing the improved `CheckoutError` message to surface
+- `deleteCheckout` now catches the backend's GraphQL-level "Forbidden" error and returns a descriptive `CheckoutError` — the backend returns HTTP 200 with a Forbidden GraphQL error, not HTTP 403
+- `CheckoutDeleteResponseSchema` now accepts `null` for the `deleteCheckout` result — fixes Zod validation crash when the backend returns null
+- `CheckoutMutationResponseSchema` now accepts `null` mutation results (`.nullish()` instead of `.optional()`) — fixes Zod validation crash when adding out-of-stock SKUs to cart
 
 ## 2.2.0 (2026-04-25)
 

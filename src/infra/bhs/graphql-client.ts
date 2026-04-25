@@ -208,17 +208,20 @@ export function createGraphqlClient(options?: Partial<GraphqlClientOptions>): Gr
         { input: { where: { id: uid } } },
       );
 
-      if (!result.success && result.error instanceof GraphQLError && result.error.statusCode === 403) {
-        return err(new CheckoutError(
-          "Cannot delete this checkout — it may have already been completed or expired",
-        ));
-      }
-
       const validated = await validate(
         result,
         (input) => CheckoutDeleteResponseSchema.parse(input),
         "deleteCheckout",
       );
+
+      // The backend returns a GraphQL "Forbidden" error (HTTP 200) when the
+      // checkout requires authentication or has already been completed.
+      if (!validated.success && validated.error.message === "Forbidden") {
+        return err(new CheckoutError(
+          "Cannot delete this checkout — it may require authentication or have already been completed",
+        ));
+      }
+
       if (!validated.success) return validated;
       return ok(undefined);
     },
