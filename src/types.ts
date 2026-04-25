@@ -62,7 +62,7 @@ export interface Product {
   readonly varietal_lvl1: string | null;
   readonly region_lvl0: string | null;
   readonly region_lvl1: string | null;
-  readonly region_lvl2?: string | null;
+  readonly region_lvl2: string | null;
   readonly warehouses: readonly ProductWarehouse[];
   readonly isSearchableProduct: boolean;
   readonly isPublicProduct: boolean;

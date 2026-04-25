@@ -1,8 +1,7 @@
 import { defineCommand } from "citty";
-import { fetchStores } from "../../api/graphql";
-import { withErrorBoundary } from "../error-boundary";
 import { OUTPUT_FLAGS } from "../flags";
 import { type FormatOptions, formatOutput } from "../formatters/index";
+import { nodeRuntime } from "../node-runtime";
 import { showSummary, withSpinner } from "../ui";
 
 const STORE_COLUMNS = [
@@ -11,7 +10,7 @@ const STORE_COLUMNS = [
   { key: "warehouseCode", label: "Warehouse", maxWidth: 12 },
   { key: "address", label: "Address", maxWidth: 45 },
   { key: "phone", label: "Phone", maxWidth: 15 },
-];
+] as const;
 
 export const storesCommand = defineCommand({
   meta: {
@@ -21,9 +20,8 @@ export const storesCommand = defineCommand({
   args: {
     ...OUTPUT_FLAGS,
   },
-  run: withErrorBoundary(async ({ args }) => {
-    const result = await withSpinner("Fetching stores\u2026", () => fetchStores());
-
+  run: async ({ args }) => {
+    const result = await withSpinner("Fetching stores…", () => nodeRuntime.services.listStores());
     if (!result.success) throw result.error;
 
     showSummary(`Found ${result.data.length} stores`);
@@ -34,5 +32,5 @@ export const storesCommand = defineCommand({
     };
 
     console.log(formatOutput(result.data as unknown as Record<string, unknown>[], formatOptions));
-  }),
+  },
 });

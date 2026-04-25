@@ -1,40 +1,16 @@
 import { defineCommand } from "citty";
-import { fetchStores } from "../../api/graphql";
-import { getFacets } from "../../api/meilisearch";
-import { findStoreByName, firstRunPicker, readConfig } from "../../config";
-import { type BhsConfig, FACET_NAMES } from "../../types";
-import { withErrorBoundary } from "../error-boundary";
+import { FACET_NAMES } from "../../types";
 import { OUTPUT_FLAGS, STORE_FLAG } from "../flags";
 import { type FormatOptions, formatOutput } from "../formatters/index";
 import { formatJson } from "../formatters/json";
+import { nodeRuntime } from "../node-runtime";
 import { showSummary, withSpinner } from "../ui";
 import { validateFacetName } from "../validation";
 
 const FACET_VALUE_COLUMNS = [
   { key: "value", label: "Value", maxWidth: 40 },
   { key: "count", label: "Count", maxWidth: 8 },
-];
-
-async function resolveStore(storeOverride: string | undefined): Promise<BhsConfig> {
-  if (storeOverride) {
-    const storesResult = await fetchStores();
-    if (!storesResult.success) throw storesResult.error;
-    const store = findStoreByName(storeOverride, storesResult.data);
-    if (!store) {
-      throw new Error(
-        `Store "${storeOverride}" not found. Run \`bhs stores\` to see available stores.`,
-      );
-    }
-    return { store: { code: store.warehouseCode, name: store.name } };
-  }
-
-  const config = readConfig();
-  if (config) return config;
-
-  const storesResult = await fetchStores();
-  if (!storesResult.success) throw storesResult.error;
-  return firstRunPicker(storesResult.data);
-}
+] as const;
 
 export const facetsCommand = defineCommand({
   meta: {
@@ -50,7 +26,7 @@ export const facetsCommand = defineCommand({
     ...OUTPUT_FLAGS,
     ...STORE_FLAG,
   },
-  run: withErrorBoundary(async ({ args }) => {
+  run: async ({ args }) => {
     if (!args.name) {
       if (args.json) {
         console.log(formatJson(FACET_NAMES));
@@ -63,13 +39,13 @@ export const facetsCommand = defineCommand({
       return;
     }
 
+    const configResult = await nodeRuntime.services.resolveStore(args.store);
+    if (!configResult.success) throw configResult.error;
+
     const facetName = validateFacetName(args.name);
-    const config = await resolveStore(args.store);
-
-    const result = await withSpinner(`Fetching facet "${facetName}"\u2026`, () =>
-      getFacets([facetName], config.store.code),
+    const result = await withSpinner(`Fetching facet "${facetName}"…`, () =>
+      nodeRuntime.services.listFacets([facetName], configResult.data.store.code),
     );
-
     if (!result.success) throw result.error;
 
     const distribution = result.data.facetDistribution[facetName];
@@ -90,5 +66,5 @@ export const facetsCommand = defineCommand({
     };
 
     console.log(formatOutput(rows, formatOptions));
-  }),
+  },
 });

@@ -1,88 +1,48 @@
-import { mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
-import { homedir } from "node:os";
-import { dirname, join } from "node:path";
-import { isCancel, select } from "@clack/prompts";
-import { z } from "zod";
-import { ConfigError } from "./lib/errors";
+import { createFileCheckoutStore } from "./infra/node/file-checkout-store";
+import { createFileConfigStore, findStoreByName, getConfigDir } from "./infra/node/file-config-store";
+import { createClackUi } from "./infra/node/clack-ui";
+import { ConfigError, PromptCancelledError } from "./core/domain/errors";
 import type { BhsConfig, Store } from "./types";
 
-const CONFIG_DIR = join(homedir(), ".config", "bhs");
-const CONFIG_PATH = join(CONFIG_DIR, "config.json");
-const CHECKOUT_PATH = join(CONFIG_DIR, "checkout.json");
+const configStore = createFileConfigStore();
+const checkoutStore = createFileCheckoutStore();
+const ui = createClackUi();
 
-const BhsConfigSchema = z.object({
-  store: z.object({
-    code: z.string(),
-    name: z.string(),
-  }),
-});
+export { findStoreByName, getConfigDir };
 
-export function readConfig(): BhsConfig | undefined {
-  try {
-    const raw = readFileSync(CONFIG_PATH, "utf-8");
-    const parsed: unknown = JSON.parse(raw);
-    return BhsConfigSchema.parse(parsed);
-  } catch (error) {
-    if (error instanceof Error && "code" in error && error.code === "ENOENT") {
-      return undefined;
-    }
-    throw new ConfigError(
-      `Invalid config at ${CONFIG_PATH}: ${error instanceof Error ? error.message : String(error)}`,
-    );
-  }
+export async function readConfig(): Promise<BhsConfig | undefined> {
+  return configStore.readConfig();
 }
 
-export function writeConfig(config: BhsConfig): void {
-  mkdirSync(dirname(CONFIG_PATH), { recursive: true });
-  writeFileSync(CONFIG_PATH, `${JSON.stringify(config, null, 2)}\n`, "utf-8");
+export async function writeConfig(config: BhsConfig): Promise<void> {
+  return configStore.writeConfig(config);
 }
 
-export function readCheckoutUid(): string | undefined {
-  try {
-    const raw = readFileSync(CHECKOUT_PATH, "utf-8");
-    const parsed = JSON.parse(raw) as { uid?: string };
-    return parsed.uid;
-  } catch {
-    return undefined;
-  }
+export async function readCheckoutUid(): Promise<string | undefined> {
+  return checkoutStore.readCheckoutUid();
 }
 
-export function writeCheckoutUid(uid: string): void {
-  mkdirSync(dirname(CHECKOUT_PATH), { recursive: true });
-  writeFileSync(CHECKOUT_PATH, `${JSON.stringify({ uid }, null, 2)}\n`, "utf-8");
+export async function writeCheckoutUid(uid: string): Promise<void> {
+  return checkoutStore.writeCheckoutUid(uid);
 }
 
-export function clearCheckoutUid(): void {
-  rmSync(CHECKOUT_PATH, { force: true });
-}
-
-export function findStoreByName(query: string, stores: readonly Store[]): Store | undefined {
-  const lower = query.toLowerCase();
-  const exact = stores.find((s) => s.name.toLowerCase() === lower);
-  if (exact) return exact;
-  return stores.find((s) => s.name.toLowerCase().includes(lower));
+export async function clearCheckoutUid(): Promise<void> {
+  return checkoutStore.clearCheckoutUid();
 }
 
 export async function firstRunPicker(stores: readonly Store[]): Promise<BhsConfig> {
-  const choice = await select({
-    message: "Select your default store:",
-    options: stores.map((s) => ({
-      value: s.warehouseCode,
-      label: `${s.name} (${s.postCode ?? "N/A"})`,
-      hint: s.address ?? "",
-    })),
-  });
-
-  if (isCancel(choice)) {
-    process.exit(0);
+  if (process.stdin.isTTY !== true || process.stdout.isTTY !== true) {
+    throw new ConfigError(
+      "No store is configured. Run `bhs config --store <name>` or pass `--store <name>`.",
+    );
   }
 
-  const store = stores.find((s) => s.warehouseCode === choice);
+  const store = await ui.selectStore(stores);
   if (!store) {
-    throw new ConfigError("Failed to resolve selected store");
+    throw new PromptCancelledError("Store selection cancelled");
   }
 
   const config: BhsConfig = { store: { code: store.warehouseCode, name: store.name } };
-  writeConfig(config);
+  await configStore.writeConfig(config);
   return config;
 }

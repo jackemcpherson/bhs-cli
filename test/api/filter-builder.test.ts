@@ -5,9 +5,7 @@ import type { SearchFilterFlags } from "../../src/types";
 describe("buildDefaultFilter", () => {
   it("builds the base filter with warehouse code", () => {
     const result = buildDefaultFilter("311");
-    expect(result).toBe(
-      'isActive = true AND warehouses.code = "311" AND productType != "Packs"',
-    );
+    expect(result).toBe('isActive = true AND warehouses.code = "311" AND productType != "Packs"');
   });
 });
 
@@ -87,6 +85,23 @@ describe("buildFilter", () => {
   it("appends raw filter", () => {
     const result = buildFilter({ ...emptyFlags, filter: "soldCount > 100" }, "311");
     expect(result).toContain("AND soldCount > 100");
+  });
+
+  it("escapes quoted string values", () => {
+    const result = buildFilter({ ...emptyFlags, varietal: 'Pinot "Noir"' }, "311");
+    expect(result).toContain('AND productAttributes.name = "Pinot \\"Noir\\""');
+  });
+
+  it("throws on invalid numeric price filters", () => {
+    expect(() => buildFilter({ ...emptyFlags, "price-min": "cheap" }, "311")).toThrow(
+      'Invalid price-min: "cheap"',
+    );
+  });
+
+  it("throws on unsupported raw filter characters", () => {
+    expect(() => buildFilter({ ...emptyFlags, filter: "soldCount > 100; DROP" }, "311")).toThrow(
+      "Invalid raw filter",
+    );
   });
 
   it("combines multiple filters", () => {

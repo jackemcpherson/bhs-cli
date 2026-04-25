@@ -1,10 +1,8 @@
 import { defineCommand } from "citty";
 import pc from "picocolors";
-import { fetchStores } from "../../api/graphql";
-import { findStoreByName, readConfig, writeConfig } from "../../config";
-import { withErrorBoundary } from "../error-boundary";
 import { OUTPUT_FLAGS } from "../flags";
 import { formatJson } from "../formatters/json";
+import { nodeRuntime } from "../node-runtime";
 import { withSpinner } from "../ui";
 
 export const configCommand = defineCommand({
@@ -19,12 +17,14 @@ export const configCommand = defineCommand({
     },
     ...OUTPUT_FLAGS,
   },
-  run: withErrorBoundary(async ({ args }) => {
+  run: async ({ args }) => {
     if (args.store) {
-      const storesResult = await withSpinner("Fetching stores\u2026", () => fetchStores());
+      const storesResult = await withSpinner("Fetching stores…", () =>
+        nodeRuntime.clients.graphql.fetchStores(),
+      );
       if (!storesResult.success) throw storesResult.error;
 
-      const store = findStoreByName(args.store, storesResult.data);
+      const store = nodeRuntime.helpers.findStoreByName(args.store, storesResult.data);
       if (!store) {
         throw new Error(
           `Store "${args.store}" not found. Run \`bhs stores\` to see available stores.`,
@@ -32,14 +32,14 @@ export const configCommand = defineCommand({
       }
 
       const config = { store: { code: store.warehouseCode, name: store.name } };
-      writeConfig(config);
+      await nodeRuntime.stores.config.writeConfig(config);
       console.log(
-        `${pc.green("\u2713")} Default store set to ${pc.bold(store.name)} (${store.warehouseCode})`,
+        `${pc.green("✓")} Default store set to ${pc.bold(store.name)} (${store.warehouseCode})`,
       );
       return;
     }
 
-    const config = readConfig();
+    const config = await nodeRuntime.stores.config.readConfig();
     if (!config) {
       console.log("No configuration found.");
       console.log(`Run ${pc.bold("bhs config --store <name>")} or any command to set up.`);
@@ -51,5 +51,5 @@ export const configCommand = defineCommand({
     } else {
       console.log(`Store: ${pc.bold(config.store.name)} (${config.store.code})`);
     }
-  }),
+  },
 });

@@ -24,6 +24,12 @@ const main = defineCommand({
 });
 
 runMain(main).catch((error: unknown) => {
-  console.error(formatError(error));
-  process.exit(1);
+  const formatted = formatError(error);
+  if (formatted) {
+    console.error(formatted);
+    process.exit(1);
+    return;
+  }
+
+  process.exit(0);
 });

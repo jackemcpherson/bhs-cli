@@ -5,7 +5,7 @@ CLI for searching [Blackhearts & Sparrows](https://blackheartsandsparrows.com.au
 ## Install
 
 ```bash
-npm install -g bhs
+npm install -g @jackemcpherson/bhs-cli
 ```
 
 Requires Node.js 20+.
@@ -79,8 +79,12 @@ bhs cart list --json
 The package also exports typed API functions for programmatic use:
 
 ```typescript
-import { searchProducts, buildFilter, fetchStores } from "bhs";
-import { createCheckout, addLineItems, getCheckout } from "bhs";
+import { searchProducts, buildFilter, fetchStores } from "@jackemcpherson/bhs-cli";
+import {
+  createCheckout,
+  addLineItems,
+  getCheckout,
+} from "@jackemcpherson/bhs-cli";
 ```
 
 ## License

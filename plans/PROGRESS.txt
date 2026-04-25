@@ -1,0 +1,63 @@
+[Review] 2026-04-25 00:24 UTC - repo-structure (warning)
+
+### Verdict: NEEDS_WORK
+
+### Findings
+
+1. **RS-001**: Missing LICENSE - Repository declares MIT in package metadata but does not include the license text file.
+   - File: package.json:24
+   - Issue: Consumers can see the SPDX identifier, but the repository is missing a root `LICENSE` file. That makes redistribution terms less explicit and fails a common packaging expectation.
+   - Suggestion: Add a root `LICENSE` file containing the MIT license text.
+
+2. **RS-002**: Missing CI/CD - Repository has tests and lint scripts but no checked-in CI workflow.
+   - File: package.json:25
+   - Issue: `test`, `check`, and `typecheck` exist locally, but there is no `.github/workflows/` or equivalent CI configuration to enforce them on push or pull request.
+   - Suggestion: Add a minimal CI workflow that runs install, `bun test`, `bun run typecheck`, and `bun run check`.
+
+3. **RS-003**: Incomplete README - Installation and import examples do not match the published package metadata.
+   - File: README.md:8
+   - Issue: The README instructs `npm install -g bhs` and imports from `"bhs"`, while the package name is `@jackemcpherson/bhs-cli`. That creates a broken getting-started path for users.
+   - Suggestion: Update README install and library examples to use the actual package name, or rename the published package to match the docs.
+
+4. **RS-004**: Missing .editorconfig - Formatting is enforced via Biome but editor defaults are not standardized.
+   - File: biome.json:1
+   - Issue: Contributors without Biome-on-save still have no shared editor baseline for whitespace, line endings, and final newlines.
+   - Suggestion: Add a small root `.editorconfig` aligned with the repo’s formatter settings.
+
+---
+
+[Review] 2026-04-25 00:37 UTC - repo-structure (warning)
+
+### Verdict: NEEDS_WORK
+
+### Findings
+
+1. **RS-001**: Incomplete README - Root documentation does not include contribution guidance or point to a contributing document.
+   - File: README.md:1
+   - Issue: The repository now has installation, usage, license, CI, and editor configuration in place, but the README still omits contribution guidance and there is no `CONTRIBUTING.md` link. That falls short of the repository baseline for a reusable reference project.
+   - Suggestion: Add a short "Contributing" section to `README.md` or add a root `CONTRIBUTING.md` and link it from the README.
+
+---
+
+[Review] 2026-04-25 11:00 UTC - release (blocking)
+
+### Verdict: NEEDS_WORK
+
+### Findings
+
+1. **RL-001**: Dirty Working Directory - 20 modified and 10+ untracked files
+   - File: .:0
+   - Issue: `git status` shows 20 modified tracked files and multiple untracked new files (src/core/, src/infra/, .github/, etc.). All changes must be committed before tagging a release.
+   - Suggestion: Stage and commit all changes for v2.1.0, then re-run the release review.
+
+2. **RL-002**: Changelog Does Not Reflect Review Fixes - v2.1.0 entry missing simplify/review changes
+   - File: CHANGELOG.md:3
+   - Issue: The v2.1.0 changelog was written before the review fixes applied in this session (extracted shared http module, removed withErrorBoundary, collapsed formatError branches, replaced sync fs with async, etc.). These are meaningful internal changes that should be documented.
+   - Suggestion: Add a "Changed" or "Internal" subsection noting: extracted shared infra HTTP utilities, replaced sync filesystem calls with async, removed identity error boundary wrapper, collapsed redundant error formatting branches.
+
+3. **RL-003**: Version Not In Source Export - No __version__ or version constant in library entrypoint
+   - File: src/index.ts:1
+   - Issue: The library entrypoint (`src/index.ts`) does not export a version constant. Consumers cannot programmatically check `import { version } from "@jackemcpherson/bhs-cli"`. The version only exists in `package.json`.
+   - Suggestion: This is standard for JS/TS packages (version comes from package.json at runtime). No action required — noting for completeness.
+
+---

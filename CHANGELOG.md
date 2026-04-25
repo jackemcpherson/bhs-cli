@@ -1,5 +1,32 @@
 # Changelog
 
+## 2.1.0 (2026-04-25)
+
+### Added
+
+- Cross-platform config path resolution for Linux, macOS, and Windows
+- CI workflow for `bun test`, `bun run typecheck`, and `bun run check`
+- Root `LICENSE` and `.editorconfig` files
+
+### Changed
+
+- README install and library import examples now match the published package name
+- Search pagination for `--package` now scans backend pages until the requested page is resolved exactly
+- Shared store-resolution logic now handles non-interactive sessions consistently
+- Extracted shared HTTP utilities (`resolveFetch`, `validateResult`) for GraphQL and Meilisearch clients
+- Replaced synchronous filesystem calls with async `fs/promises` in config and checkout stores
+- Removed identity `withErrorBoundary` wrapper; errors now propagate to the top-level handler
+- Collapsed redundant `formatError` branches into shared `TransportError` and generic `Error` handlers
+- Meilisearch facet query now uses canonical `buildDefaultFilter` instead of an inline copy
+
+### Fixed
+
+- `bhs cart clear` no longer drops the local cart reference when the server-side delete fails
+- Stale local cart IDs are now cleared when the checkout no longer exists on the server
+- Browser checkout opening now works on Windows in addition to macOS and Linux
+- Search filter construction now escapes string values and validates numeric price filters
+- Product and search price formatting now consistently render two decimal places
+
 ## 2.0.0 (2026-04-24)
 
 ### Breaking Changes

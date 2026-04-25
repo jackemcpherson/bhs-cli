@@ -88,7 +88,7 @@ export const SEARCH_FILTER_FLAGS = {
   },
   filter: {
     type: "string" as const,
-    description: "Raw Meilisearch filter expression",
+    description: "Advanced raw Meilisearch filter expression",
   },
 } as const;
 
