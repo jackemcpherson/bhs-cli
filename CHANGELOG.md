@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.1.1 (2026-04-25)
+
+### Fixed
+
+- Zod schema now accepts arrays for `farming`, `dietaryTags`, and `stylisticChoices` fields (Meilisearch returns mixed string/array types)
+- `region_lvl2` field marked optional to handle products where the field is absent
+
 ## 2.1.0 (2026-04-25)
 
 ### Added

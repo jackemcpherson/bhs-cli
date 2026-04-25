@@ -45,7 +45,7 @@ export interface Product {
   readonly variants: readonly ProductVariant[];
   readonly tags: readonly string[];
   readonly filterTags: readonly string[];
-  readonly farming: string | null;
+  readonly farming: string | readonly string[] | null;
   readonly tastesLike: string | null;
   readonly crush: string | null;
   readonly setting: string | null;
@@ -62,16 +62,16 @@ export interface Product {
   readonly varietal_lvl1: string | null;
   readonly region_lvl0: string | null;
   readonly region_lvl1: string | null;
-  readonly region_lvl2: string | null;
+  readonly region_lvl2?: string | null | undefined;
   readonly warehouses: readonly ProductWarehouse[];
   readonly isSearchableProduct: boolean;
   readonly isPublicProduct: boolean;
   readonly isActive: boolean;
   readonly customCollections: readonly string[] | null;
-  readonly dietaryTags: string | null;
+  readonly dietaryTags: string | readonly string[] | null;
   readonly soldCount: number;
   readonly isInHouse: boolean;
-  readonly stylisticChoices: string | null;
+  readonly stylisticChoices: string | readonly string[] | null;
   readonly availableWarehouseCodes: readonly string[];
 }
 
