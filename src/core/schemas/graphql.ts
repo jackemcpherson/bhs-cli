@@ -74,7 +74,7 @@ export const CheckoutMutationResponseSchema = z.object({
       .object({
         checkout: CheckoutSchema,
       })
-      .optional(),
+      .nullish(),
   ),
   errors: z.array(GraphqlErrorSchema).optional(),
 });

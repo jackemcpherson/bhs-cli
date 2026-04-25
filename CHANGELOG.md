@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.2.1 (2026-04-25)
+
+### Fixed
+
+- `CheckoutMutationResponseSchema` now accepts `null` mutation results (`.nullish()` instead of `.optional()`) — fixes Zod validation crash when adding out-of-stock SKUs to cart, allowing the improved `CheckoutError` message to surface
+
 ## 2.2.0 (2026-04-25)
 
 ### Changed
