@@ -1,5 +1,16 @@
 # Changelog
 
+## 2.2.0 (2026-04-25)
+
+### Changed
+
+- `addLineItems` / `updateLineItemQuantity` now return a clear `CheckoutError` when the backend rejects the mutation (e.g. out-of-stock SKU) instead of the opaque `"Unexpected response: missing addLineItemsToCheckout"` message
+- `deleteCheckout` now catches HTTP 403 Forbidden and returns a descriptive `CheckoutError` instead of a raw transport error
+
+### Fixed
+
+- `region_lvl0` and `region_lvl1` now accept `undefined` (`.nullish()`) — fixes Zod validation crash on Beer, Food, Giftware, and AlcoholFree product types (released as 2.1.3 patch)
+
 ## 2.1.2 (2026-04-25)
 
 ### Fixed

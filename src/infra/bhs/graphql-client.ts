@@ -1,5 +1,5 @@
 import { CheckoutDeleteResponseSchema, CheckoutGetResponseSchema, CheckoutMutationResponseSchema, CheckoutSchema, CheckoutCreateResponseSchema, StoresResponseSchema } from "../../core/schemas/graphql";
-import { GraphQLError } from "../../core/domain/errors";
+import { CheckoutError, GraphQLError } from "../../core/domain/errors";
 import { err, ok, type Result } from "../../lib/result";
 import type { Checkout, LineItemInput, Store } from "../../types";
 import { DEFAULT_GRAPHQL_URL } from "./defaults";
@@ -147,7 +147,9 @@ export function createGraphqlClient(options?: Partial<GraphqlClientOptions>): Gr
 
     const mutation = validated.data.data[mutationName];
     if (!mutation) {
-      return err(new GraphQLError(`Unexpected response: missing ${mutationName}`));
+      return err(new CheckoutError(
+        "Could not update cart — the item may be out of stock or the SKU may be invalid",
+      ));
     }
 
     return ok(CheckoutSchema.parse(mutation.checkout));
@@ -205,6 +207,13 @@ export function createGraphqlClient(options?: Partial<GraphqlClientOptions>): Gr
         `mutation($input: deleteCheckoutInput!) { deleteCheckout(input: $input) { checkout { uid } } }`,
         { input: { where: { id: uid } } },
       );
+
+      if (!result.success && result.error instanceof GraphQLError && result.error.statusCode === 403) {
+        return err(new CheckoutError(
+          "Cannot delete this checkout — it may have already been completed or expired",
+        ));
+      }
+
       const validated = await validate(
         result,
         (input) => CheckoutDeleteResponseSchema.parse(input),
