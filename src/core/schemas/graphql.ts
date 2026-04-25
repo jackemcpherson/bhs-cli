@@ -81,11 +81,13 @@ export const CheckoutMutationResponseSchema = z.object({
 
 export const CheckoutDeleteResponseSchema = z.object({
   data: z.object({
-    deleteCheckout: z.object({
-      checkout: z.object({
-        uid: z.string(),
-      }),
-    }),
+    deleteCheckout: z
+      .object({
+        checkout: z.object({
+          uid: z.string(),
+        }),
+      })
+      .nullable(),
   }),
   errors: z.array(GraphqlErrorSchema).optional(),
 });

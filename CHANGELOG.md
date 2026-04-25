@@ -1,9 +1,10 @@
 # Changelog
 
-## 2.2.1 (2026-04-25)
+## 2.2.2 (2026-04-25)
 
 ### Fixed
 
+- `CheckoutDeleteResponseSchema` now accepts `null` for the `deleteCheckout` result — fixes Zod validation crash when the backend returns null (checkout already deleted or expired)
 - `CheckoutMutationResponseSchema` now accepts `null` mutation results (`.nullish()` instead of `.optional()`) — fixes Zod validation crash when adding out-of-stock SKUs to cart, allowing the improved `CheckoutError` message to surface
 
 ## 2.2.0 (2026-04-25)
