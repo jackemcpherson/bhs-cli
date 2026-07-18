@@ -1,7 +1,7 @@
 import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
-import { CheckoutUidSchema } from "../../core/schemas/config";
 import type { CheckoutStore } from "../../core/ports/checkout-store";
+import { CheckoutUidSchema } from "../../core/schemas/config";
 import { getConfigDir } from "./file-config-store";
 
 export function createFileCheckoutStore(configDir = getConfigDir()): CheckoutStore {

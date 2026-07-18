@@ -88,9 +88,7 @@ export const SearchResultSchema = z.object({
 
 export const FacetResultSchema = z.object({
   facetDistribution: z.record(z.string(), z.record(z.string(), z.number())),
-  facetStats: z
-    .record(z.string(), z.object({ min: z.number(), max: z.number() }))
-    .optional(),
+  facetStats: z.record(z.string(), z.object({ min: z.number(), max: z.number() })).optional(),
 });
 
 export const SearchWithFacetsSchema = SearchResultSchema.extend({

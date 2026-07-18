@@ -1,7 +1,17 @@
-import { buildFilter } from "../domain/filters";
-import { toPackageSearchRow, toProductSearchRow, type ProductSearchRow } from "../domain/product-view";
 import { ok, type Result } from "../../lib/result";
-import type { Product, SearchFilterFlags, SearchParams, SearchResult, SortOption } from "../../types";
+import type {
+  Product,
+  SearchFilterFlags,
+  SearchParams,
+  SearchResult,
+  SortOption,
+} from "../../types";
+import { buildFilter } from "../domain/filters";
+import {
+  type ProductSearchRow,
+  toPackageSearchRow,
+  toProductSearchRow,
+} from "../domain/product-view";
 
 interface SearchApi {
   searchProducts(params: SearchParams): Promise<Result<SearchResult, Error>>;
@@ -56,9 +66,7 @@ export async function searchProductsService(
     });
     if (!result.success) return result;
 
-    const label = input.packageName
-      ? `products with "${input.packageName}"`
-      : "in-stock products";
+    const label = input.packageName ? `products with "${input.packageName}"` : "in-stock products";
 
     return ok({
       rows: result.data.rows,
@@ -84,7 +92,9 @@ export async function searchProductsService(
   if (!result.success) return result;
 
   const totalPages =
-    result.data.estimatedTotalHits === 0 ? 0 : Math.ceil(result.data.estimatedTotalHits / input.limit);
+    result.data.estimatedTotalHits === 0
+      ? 0
+      : Math.ceil(result.data.estimatedTotalHits / input.limit);
 
   return ok({
     rows: result.data.hits.map((hit) => toProductSearchRow(hit, input.warehouseCode)),

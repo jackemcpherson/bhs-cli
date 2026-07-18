@@ -1,9 +1,9 @@
-import { CheckoutError, GraphQLError } from "../domain/errors";
-import { toCartRows, type CartRow } from "../domain/cart-view";
-import type { CheckoutStore } from "../ports/checkout-store";
-import type { UrlOpener } from "../ports/url-opener";
 import { ok, type Result } from "../../lib/result";
 import type { Checkout, Product } from "../../types";
+import { type CartRow, toCartRows } from "../domain/cart-view";
+import { CheckoutError, GraphQLError } from "../domain/errors";
+import type { CheckoutStore } from "../ports/checkout-store";
+import type { UrlOpener } from "../ports/url-opener";
 
 interface CartGraphqlClient {
   createCheckout(): Promise<Result<Checkout, Error>>;

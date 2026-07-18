@@ -1,7 +1,11 @@
-import { createFileCheckoutStore } from "./infra/node/file-checkout-store";
-import { createFileConfigStore, findStoreByName, getConfigDir } from "./infra/node/file-config-store";
-import { createClackUi } from "./infra/node/clack-ui";
 import { ConfigError, PromptCancelledError } from "./core/domain/errors";
+import { createClackUi } from "./infra/node/clack-ui";
+import { createFileCheckoutStore } from "./infra/node/file-checkout-store";
+import {
+  createFileConfigStore,
+  findStoreByName,
+  getConfigDir,
+} from "./infra/node/file-config-store";
 import type { BhsConfig, Store } from "./types";
 
 const configStore = createFileConfigStore();

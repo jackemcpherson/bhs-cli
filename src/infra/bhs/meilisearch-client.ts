@@ -1,6 +1,10 @@
 import { MeilisearchError } from "../../core/domain/errors";
 import { buildDefaultFilter } from "../../core/domain/filters";
-import { ProductSchema, SearchResultSchema, SearchWithFacetsSchema } from "../../core/schemas/meilisearch";
+import {
+  ProductSchema,
+  SearchResultSchema,
+  SearchWithFacetsSchema,
+} from "../../core/schemas/meilisearch";
 import { err, ok, type Result } from "../../lib/result";
 import type { FacetResult, Product, SearchParams, SearchResult } from "../../types";
 import {
@@ -68,10 +72,9 @@ export function createMeilisearchClient(
       return ok(await response.json());
     } catch (error) {
       return err(
-        new MeilisearchError(
-          String(error instanceof Error ? error.message : error),
-          { cause: error },
-        ),
+        new MeilisearchError(String(error instanceof Error ? error.message : error), {
+          cause: error,
+        }),
       );
     }
   }
@@ -88,7 +91,11 @@ export function createMeilisearchClient(
       if (params.facets && params.facets.length > 0) body.facets = params.facets;
 
       const result = await postSearch(body);
-      return validateResult<SearchResult>(result, (input) => SearchResultSchema.parse(input), "Meilisearch search");
+      return validateResult<SearchResult>(
+        result,
+        (input) => SearchResultSchema.parse(input),
+        "Meilisearch search",
+      );
     },
 
     async getProductBySku(sku: string) {

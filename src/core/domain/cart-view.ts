@@ -43,4 +43,3 @@ export function getCartTotalsSummary(checkout: Checkout): CartTotalsSummary {
     total: `$${checkout.total.toFixed(2)}`,
   };
 }
-

@@ -1,6 +1,6 @@
-import type { Checkout, LineItemInput, Store } from "../types";
 import { createGraphqlClient } from "../infra/bhs/graphql-client";
 import type { Result } from "../lib/result";
+import type { Checkout, LineItemInput, Store } from "../types";
 
 const client = createGraphqlClient();
 
