@@ -1,6 +1,6 @@
-import { toProductDetailEntries } from "../domain/product-view";
 import { ok, type Result } from "../../lib/result";
 import type { Product } from "../../types";
+import { toProductDetailEntries } from "../domain/product-view";
 
 interface ProductReader {
   getProductBySku(sku: string): Promise<Result<Product, Error>>;

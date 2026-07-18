@@ -1,37 +1,3 @@
-export { buildDefaultFilter, buildFilter, parsePriceFilter, validateRawFilter } from "./core/domain/filters";
-export {
-  createGraphqlClient,
-  type GraphqlClient,
-  type GraphqlClientOptions,
-} from "./infra/bhs/graphql-client";
-export {
-  createMeilisearchClient,
-  type MeilisearchClient,
-  type MeilisearchClientOptions,
-} from "./infra/bhs/meilisearch-client";
-export { createCartService } from "./core/services/cart-service";
-export { getProductService } from "./core/services/get-product";
-export { listFacets } from "./core/services/list-facets";
-export { listStores } from "./core/services/list-stores";
-export { resolveStore } from "./core/services/resolve-store";
-export { searchWithPostFilter, searchWithPostFilter as searchProductsByPackagePage, searchProductsService } from "./core/services/search-products";
-export {
-  BrowserOpenError,
-  CheckoutError,
-  ConfigError,
-  GraphQLError,
-  MeilisearchError,
-  PromptCancelledError,
-  StoreResolutionError,
-  TransportError,
-  ValidationError,
-} from "./core/domain/errors";
-export type { CliUi } from "./core/ports/cli-ui";
-export type { CheckoutStore } from "./core/ports/checkout-store";
-export type { ConfigStore } from "./core/ports/config-store";
-export type { UrlOpener } from "./core/ports/url-opener";
-export type { Err, Ok, Result } from "./lib/result";
-export { err, ok } from "./lib/result";
 export {
   addLineItems,
   createCheckout,
@@ -45,6 +11,49 @@ export {
   getProductBySku,
   searchProducts,
 } from "./api/meilisearch";
+export {
+  BrowserOpenError,
+  CheckoutError,
+  ConfigError,
+  GraphQLError,
+  MeilisearchError,
+  PromptCancelledError,
+  StoreResolutionError,
+  TransportError,
+  ValidationError,
+} from "./core/domain/errors";
+export {
+  buildDefaultFilter,
+  buildFilter,
+  parsePriceFilter,
+  validateRawFilter,
+} from "./core/domain/filters";
+export type { CheckoutStore } from "./core/ports/checkout-store";
+export type { CliUi } from "./core/ports/cli-ui";
+export type { ConfigStore } from "./core/ports/config-store";
+export type { UrlOpener } from "./core/ports/url-opener";
+export { createCartService } from "./core/services/cart-service";
+export { getProductService } from "./core/services/get-product";
+export { listFacets } from "./core/services/list-facets";
+export { listStores } from "./core/services/list-stores";
+export { resolveStore } from "./core/services/resolve-store";
+export {
+  searchProductsService,
+  searchWithPostFilter,
+  searchWithPostFilter as searchProductsByPackagePage,
+} from "./core/services/search-products";
+export {
+  createGraphqlClient,
+  type GraphqlClient,
+  type GraphqlClientOptions,
+} from "./infra/bhs/graphql-client";
+export {
+  createMeilisearchClient,
+  type MeilisearchClient,
+  type MeilisearchClientOptions,
+} from "./infra/bhs/meilisearch-client";
+export type { Err, Ok, Result } from "./lib/result";
+export { err, ok } from "./lib/result";
 export type {
   BhsConfig,
   Checkout,

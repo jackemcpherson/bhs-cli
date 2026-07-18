@@ -59,7 +59,9 @@ export function toProductDetailEntries(
   store: { code: string; name: string },
 ): readonly (readonly [string, string])[] {
   const warehouse = product.warehouses.find((entry) => entry.code === store.code);
-  const stockDisplay = warehouse ? `${warehouse.availableQty} @ ${store.name}` : `0 @ ${store.name}`;
+  const stockDisplay = warehouse
+    ? `${warehouse.availableQty} @ ${store.name}`
+    : `0 @ ${store.name}`;
   const collections = product.customCollections?.join(", ") ?? "-";
   const attrs = product.productAttributes;
 

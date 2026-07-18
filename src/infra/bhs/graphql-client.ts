@@ -1,5 +1,12 @@
-import { CheckoutDeleteResponseSchema, CheckoutGetResponseSchema, CheckoutMutationResponseSchema, CheckoutSchema, CheckoutCreateResponseSchema, StoresResponseSchema } from "../../core/schemas/graphql";
 import { CheckoutError, GraphQLError } from "../../core/domain/errors";
+import {
+  CheckoutCreateResponseSchema,
+  CheckoutDeleteResponseSchema,
+  CheckoutGetResponseSchema,
+  CheckoutMutationResponseSchema,
+  CheckoutSchema,
+  StoresResponseSchema,
+} from "../../core/schemas/graphql";
 import { err, ok, type Result } from "../../lib/result";
 import type { Checkout, LineItemInput, Store } from "../../types";
 import { DEFAULT_GRAPHQL_URL } from "./defaults";
@@ -68,15 +75,17 @@ async function parseJsonResponse(response: Response): Promise<Result<unknown, Er
   }
 }
 
-function unwrapGraphqlErrors(
-  json: { errors?: readonly { message: string }[] },
-): Result<void, Error> | undefined {
+function unwrapGraphqlErrors(json: {
+  errors?: readonly { message: string }[];
+}): Result<void, Error> | undefined {
   const firstError = json.errors?.[0];
   if (!firstError) return undefined;
   return err(new GraphQLError(firstError.message));
 }
 
-function defaultGraphqlClientOptions(options?: Partial<GraphqlClientOptions>): GraphqlClientOptions {
+function defaultGraphqlClientOptions(
+  options?: Partial<GraphqlClientOptions>,
+): GraphqlClientOptions {
   return {
     url: options?.url ?? DEFAULT_GRAPHQL_URL,
     ...(options?.fetchFn ? { fetchFn: options.fetchFn } : {}),
@@ -108,7 +117,9 @@ export function createGraphqlClient(options?: Partial<GraphqlClientOptions>): Gr
 
       return parseJsonResponse(response);
     } catch (error) {
-      return err(new GraphQLError(String(error instanceof Error ? error.message : error), { cause: error }));
+      return err(
+        new GraphQLError(String(error instanceof Error ? error.message : error), { cause: error }),
+      );
     }
   }
 
@@ -120,7 +131,9 @@ export function createGraphqlClient(options?: Partial<GraphqlClientOptions>): Gr
     const validated = await validateResult(result, parser, `GraphQL ${label}`);
     if (!validated.success) return validated;
 
-    const errorResult = unwrapGraphqlErrors(validated.data as { errors?: readonly { message: string }[] });
+    const errorResult = unwrapGraphqlErrors(
+      validated.data as { errors?: readonly { message: string }[] },
+    );
     if (errorResult) return errorResult as Result<T, Error>;
     return validated;
   }
@@ -147,9 +160,11 @@ export function createGraphqlClient(options?: Partial<GraphqlClientOptions>): Gr
 
     const mutation = validated.data.data[mutationName];
     if (!mutation) {
-      return err(new CheckoutError(
-        "Could not update cart — the item may be out of stock or the SKU may be invalid",
-      ));
+      return err(
+        new CheckoutError(
+          "Could not update cart — the item may be out of stock or the SKU may be invalid",
+        ),
+      );
     }
 
     return ok(CheckoutSchema.parse(mutation.checkout));
@@ -158,7 +173,11 @@ export function createGraphqlClient(options?: Partial<GraphqlClientOptions>): Gr
   return {
     async fetchStores() {
       const result = await postGraphQL(STORES_QUERY);
-      const validated = await validate(result, (input) => StoresResponseSchema.parse(input), "stores");
+      const validated = await validate(
+        result,
+        (input) => StoresResponseSchema.parse(input),
+        "stores",
+      );
       if (!validated.success) return validated;
       return ok([...validated.data.data.stores]);
     },
@@ -217,9 +236,11 @@ export function createGraphqlClient(options?: Partial<GraphqlClientOptions>): Gr
       // The backend returns a GraphQL "Forbidden" error (HTTP 200) when the
       // checkout requires authentication or has already been completed.
       if (!validated.success && validated.error.message === "Forbidden") {
-        return err(new CheckoutError(
-          "Cannot delete this checkout — it may require authentication or have already been completed",
-        ));
+        return err(
+          new CheckoutError(
+            "Cannot delete this checkout — it may require authentication or have already been completed",
+          ),
+        );
       }
 
       if (!validated.success) return validated;

@@ -1,5 +1,5 @@
-import { MeilisearchError } from "./errors";
 import type { SearchFilterFlags } from "../../types";
+import { MeilisearchError } from "./errors";
 
 function quoteFilterValue(value: string): string {
   return JSON.stringify(value);

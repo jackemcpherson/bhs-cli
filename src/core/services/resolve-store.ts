@@ -1,8 +1,8 @@
+import { ok, type Result } from "../../lib/result";
+import type { BhsConfig, Store } from "../../types";
 import { ConfigError, PromptCancelledError, StoreResolutionError } from "../domain/errors";
 import type { CliUi } from "../ports/cli-ui";
 import type { ConfigStore } from "../ports/config-store";
-import { ok, type Result } from "../../lib/result";
-import type { BhsConfig, Store } from "../../types";
 
 export interface ResolveStoreDependencies {
   readonly configStore: ConfigStore;

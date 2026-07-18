@@ -1,5 +1,5 @@
-import type { FacetResult } from "../../types";
 import type { Result } from "../../lib/result";
+import type { FacetResult } from "../../types";
 
 interface FacetReader {
   getFacets(

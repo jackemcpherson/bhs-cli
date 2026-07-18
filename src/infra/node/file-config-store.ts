@@ -2,8 +2,8 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { homedir } from "node:os";
 import { dirname, join } from "node:path";
 import { ConfigError } from "../../core/domain/errors";
-import { BhsConfigSchema } from "../../core/schemas/config";
 import type { ConfigStore } from "../../core/ports/config-store";
+import { BhsConfigSchema } from "../../core/schemas/config";
 import type { BhsConfig, Store } from "../../types";
 
 export function getConfigDir(): string {

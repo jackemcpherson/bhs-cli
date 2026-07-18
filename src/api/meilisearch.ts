@@ -1,7 +1,7 @@
 import { buildDefaultFilter, buildFilter } from "../core/domain/filters";
 import { createMeilisearchClient } from "../infra/bhs/meilisearch-client";
-import type { FacetResult, Product, SearchParams, SearchResult } from "../types";
 import type { Result } from "../lib/result";
+import type { FacetResult, Product, SearchParams, SearchResult } from "../types";
 
 const client = createMeilisearchClient();
 

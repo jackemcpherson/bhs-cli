@@ -5,5 +5,5 @@ export async function withSpinner<T>(message: string, fn: () => Promise<T>): Pro
 }
 
 export function showSummary(message: string): void {
-  return nodeRuntime.ui.showSummary(message);
+  nodeRuntime.ui.showSummary(message);
 }
