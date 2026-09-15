@@ -1,5 +1,14 @@
 # Changelog
 
+## 2.2.4 (2026-09-15)
+
+### Fixed
+
+- `ProductSchema` now accepts the older document shape present in part of the Meilisearch index — fixes Zod validation crash on broad searches (e.g. `bhs search pinot`) whenever a result page includes one of these records:
+  - `callOutPrimary` / `callOutSecondary` may be `null`
+  - `tastesLike`, `crush`, `setting`, `drinkability`, `dietary`, `style`, and `type` may be absent
+  - `warehouses[].code` may be a number; it is normalised to a string so per-store stock lookups keep matching
+
 ## 2.2.3 (2026-04-25)
 
 ### Fixed

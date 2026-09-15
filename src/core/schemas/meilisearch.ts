@@ -16,8 +16,10 @@ const ProductAttributeSchema = z.object({
   hexColor: z.string(),
 });
 
+// Some index documents carry numeric warehouse codes (e.g. 311 rather than
+// "311"); normalise to string so downstream `code === warehouseCode` matches.
 const ProductWarehouseSchema = z.object({
-  code: z.string(),
+  code: z.union([z.string(), z.number()]).transform((code) => String(code)),
   availableQty: z.number(),
 });
 
@@ -36,8 +38,8 @@ export const ProductSchema = z.object({
   masterProductType: z.string(),
   productType: z.string(),
   masterSku: z.string(),
-  callOutPrimary: z.string(),
-  callOutSecondary: z.string(),
+  callOutPrimary: z.string().nullish(),
+  callOutSecondary: z.string().nullish(),
   isFeaturedProduct: z.boolean(),
   price: z.number(),
   isNewProductUntil: z.string().nullable(),
@@ -48,13 +50,14 @@ export const ProductSchema = z.object({
   tags: z.array(z.string()),
   filterTags: z.array(z.string()),
   farming: z.union([z.string(), z.array(z.string())]).nullable(),
-  tastesLike: z.string().nullable(),
-  crush: z.string().nullable(),
-  setting: z.string().nullable(),
-  drinkability: ProductNamedFieldSchema,
-  dietary: ProductNamedFieldSchema,
-  style: ProductNamedFieldSchema,
-  type: ProductNamedFieldSchema,
+  // Older index documents omit these editorial/taxonomy fields entirely.
+  tastesLike: z.string().nullish(),
+  crush: z.string().nullish(),
+  setting: z.string().nullish(),
+  drinkability: ProductNamedFieldSchema.nullish(),
+  dietary: ProductNamedFieldSchema.nullish(),
+  style: ProductNamedFieldSchema.nullish(),
+  type: ProductNamedFieldSchema.nullish(),
   productAttributes: z.array(ProductAttributeSchema),
   attributeCodes: z.array(z.string()),
   coverImageUrl: z.string(),
