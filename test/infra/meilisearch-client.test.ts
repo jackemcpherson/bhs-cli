@@ -105,6 +105,80 @@ describe("createMeilisearchClient", () => {
     expect(requests).toEqual(["https://search.example.test/indexes/products/search"]);
   });
 
+  it("accepts legacy-shaped hits with null call-outs, missing taxonomy fields, and numeric warehouse codes", async () => {
+    const {
+      tastesLike: _tastesLike,
+      crush: _crush,
+      setting: _setting,
+      drinkability: _drinkability,
+      dietary: _dietary,
+      style: _style,
+      type: _type,
+      ...legacyProduct
+    } = makeProduct();
+    const legacyHit = {
+      ...legacyProduct,
+      callOutPrimary: null,
+      callOutSecondary: null,
+      warehouses: [
+        { code: 311, availableQty: 4 },
+        { code: "312", availableQty: 0 },
+      ],
+    };
+
+    const client = createMeilisearchClient({
+      fetchFn: async () =>
+        jsonResponse({
+          hits: [makeProduct(), legacyHit],
+          query: "pinot",
+          processingTimeMs: 1,
+          limit: 2,
+          offset: 0,
+          estimatedTotalHits: 2,
+        }),
+    });
+
+    const result = await client.searchProducts({
+      q: "pinot",
+      limit: 2,
+      offset: 0,
+      filter: "isActive = true",
+      sort: undefined,
+      facets: undefined,
+    });
+
+    expect(result.success).toBe(true);
+    if (!result.success) return;
+    const [, parsed] = result.data.hits;
+    expect(parsed?.callOutPrimary).toBeNull();
+    expect(parsed?.drinkability).toBeUndefined();
+    expect(parsed?.type).toBeUndefined();
+    expect(parsed?.warehouses).toEqual([
+      { code: "311", availableQty: 4 },
+      { code: "312", availableQty: 0 },
+    ]);
+  });
+
+  it("normalises numeric warehouse codes when fetching a product by SKU", async () => {
+    const client = createMeilisearchClient({
+      fetchFn: async () =>
+        jsonResponse({
+          hits: [{ ...makeProduct(), warehouses: [{ code: 311, availableQty: 2 }] }],
+          query: "",
+          processingTimeMs: 1,
+          limit: 1,
+          offset: 0,
+          estimatedTotalHits: 1,
+        }),
+    });
+
+    const result = await client.getProductBySku("SKU1");
+
+    expect(result.success).toBe(true);
+    if (!result.success) return;
+    expect(result.data.warehouses[0]?.code).toBe("311");
+  });
+
   it("returns ValidationError on malformed search payloads", async () => {
     const client = createMeilisearchClient({
       fetchFn: async () => jsonResponse({ hits: [{ id: "1" }] }),
